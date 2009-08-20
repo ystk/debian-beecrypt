@@ -1,0 +1,2 @@
+- report bug upstream that 'configure' must add -fpic and -DPIC for gcc
+- suggest to upstream that he should use doxygen to document his code
