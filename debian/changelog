@@ -1,3 +1,42 @@
+beecrypt (4.2.1-4) unstable; urgency=low
+
+  * QA upload.
+  * shorten long description
+  * silence lintian's binary-control-field-duplicates-source
+  * switch to 3.0 (quilt) format
+  * modernize debian/rules:
+  - support build-arch build-indep
+  - use dpkg-buildflags
+  * bump Standards-Version
+  * fix upstream's configure not setting OPENMP_LIBS if CFLAGS is set
+    (Closes: 558840)
+  * call automake explicitly avoiding Makefile.in having another one
+    than the automake build-dependency (Closes: 341656)
+  * get rid of libs linked against but not used
+  * hard-code results to use /dev/random and /dev/urandom
+    but not /dev/dsp and /dev/audio. (so that this does not depends
+    on the buildd's /dev)
+  * fix some debug print statements not ready for 64 bit
+    (found by gcc's -Wformat)
+
+ -- Bernhard R. Link <brlink@debian.org>  Sat, 17 Sep 2011 19:47:35 +0200
+
+beecrypt (4.2.1-3) unstable; urgency=low
+
+  * QA upload.
+  * Get rid of unneeded *.la files (Closes: #621333).
+
+ -- Alessio Treglia <alessio@debian.org>  Fri, 03 Jun 2011 11:07:44 +0200
+
+beecrypt (4.2.1-2) unstable; urgency=low
+
+  * QA upload.
+  * Orphan the package
+  * Fix out-of-date-standards-version
+  * Fix weak-library-dev-dependency
+
+ -- Anibal Monsalve Salazar <anibal@debian.org>  Fri, 26 Nov 2010 11:55:25 +1100
+
 beecrypt (4.2.1-1) unstable; urgency=low
 
   * New upstream release 

@@ -1,26 +1,47 @@
 #!/usr/bin/make -f
 # Copyright (C) 2005 Anibal Monsalve Salazar <anibal@debian.org>
 
-PATH=/usr/bin:/bin
+ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+MAKEFLAGS += -j$(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+endif
 
 DEB_BUILD_GNU_TYPE := $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 DEB_HOST_GNU_TYPE  := $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+CFLAGS             := $(shell dpkg-buildflags --get CFLAGS)
+CPPFLAGS           := $(shell dpkg-buildflags --get CPPFLAGS)
+LDFLAGS            := $(shell dpkg-buildflags --get LDFLAGS)
 
-export DH_VERBOSE=1
-export DH_OPTIONS
+CFLAGS += -Wall
 
-configure: configure-stamp
-configure-stamp:
+# export DH_VERBOSE=1
+
+config.status: configure.ac
 	dh_testdir
 	libtoolize --copy --force
 	aclocal
+	automake -a -c
 	autoconf
 	cp -f /usr/share/misc/config.sub /usr/share/misc/config.guess .
-	./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --enable-static --without-java --without-cplusplus
-	touch $@
+	./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) \
+		OPENMP_LIBS="-lgomp" \
+		--prefix=/usr --enable-static --without-java --without-cplusplus \
+		CFLAGS='$(CFLAGS)' CPPFLAGS='$(CPPFLAGS)' LDFLAGS='$(LDFLAGS)'
+	# upstream configure has no way to enable/disable this,
+	# so change the result instead manually:
+	sed -e '/HAVE_DEV_AUDIO/d' -e '/HAVE_DEV_DSP/d' \
+		-e 's/undef HAVE_DEV_RANDOM/define HAVE_DEV_RANDOM 1/' \
+		-e 's/undef HAVE_DEV_URANDOM/define HAVE_DEV_URANDOM 1/' \
+		-i config.h
+	# the check enabling it's use is broken anyway, so get rid of the library:
+	sed -e 's/ -lrt / /' -i Makefile
+	# not needed due to --without-cplusplus
+	sed -e 's/ -ldl / /' -i Makefile
 
-build: build-stamp
-build-stamp: configure
+
+build: build-arch build-indep
+build-indep:
+build-arch: build-stamp
+build-stamp: config.status
 	dh_testdir
 	$(MAKE)
 	touch $@
@@ -32,26 +53,16 @@ clean:
 	-rm -f build-stamp configure-stamp
 	rm -f config.sub config.guess
 	-rm beecrypt *.o .libs/* python/.libs/* python/*.o
-	-rm -f `find . -name Makefile`
+	-find . -name Makefile -delete
 	dh_clean
 
-install: DH_OPTIONS=
-install: build
+binary-arch: build-stamp
 	dh_testdir
 	dh_testroot
 	dh_prep
 	dh_installdirs
-	$(MAKE) install DESTDIR=`pwd`/debian/tmp
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
 	dh_movefiles
-
-binary-indep: DH_OPTIONS=-i
-binary-indep: 
-# nothing to do
-
-binary-arch: DH_OPTIONS=-a
-binary-arch: build install
-	dh_testdir
-	dh_testroot
 	dh_installdebconf
 	dh_installdocs
 	dh_installchangelogs
@@ -66,5 +77,6 @@ binary-arch: build install
 	dh_md5sums
 	dh_builddeb
 
+binary-indep:
 binary: binary-indep binary-arch
-.PHONY: configure build clean binary-indep binary-arch binary install
+.PHONY: build build-arch build-indep clean binary-indep binary-arch binary

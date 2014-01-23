@@ -1,49 +1,32 @@
 Source: beecrypt
 Section: devel
 Priority: optional
-Maintainer: Anibal Monsalve Salazar <anibal@debian.org>
+Maintainer: Debian QA Group <packages@qa.debian.org>
 Build-Depends: debhelper (>= 7), libtool, automake, autoconf, autotools-dev, m4, python-dev
-Standards-Version: 3.8.3
+Standards-Version: 3.9.2
 Homepage: http://beecrypt.sourceforge.net/
 
 Package: libbeecrypt-dev
 Section: libdevel
 Architecture: any
-Depends: libbeecrypt7 (>=${binary:Version}), ${misc:Depends}
+Depends: libbeecrypt7 (= ${binary:Version}), ${misc:Depends}
 Provides: beecrypt-dev, beecrypt2-dev, libbeecrypt6-dev
 Conflicts: beecrypt-dev, beecrypt2-dev, libbeecrypt6-dev
 Description: header files for beecrypt, a library of cryptographic algorithms
- BeeCrypt is an open source cryptography library that contains
- highly optimized C and assembler implementations of many well-known
- algorithms including Blowfish, SHA-1, Diffie-Hellman, and ElGamal.
+ BeeCrypt is an open source general purpose cryptography library
+ that contains highly optimized C and assembler implementations of
+ many well-known algorithms including Blowfish, SHA-1, Diffie-Hellman,
+ and ElGamal.
  .
- Unlike some other crypto libraries, BeeCrypt is not designed to
- solve one specific problem, like file encryption, but to be a
- general purpose toolkit which can be used in a variety of
- applications.
- .
- There are also no patent or royalty issues associated with
- BeeCrypt, and it is released under the GNU LGPL license, which
- means it can be used for free in both open source and closed
- source commercial projects. 
+ This package contains the development files for the library.
 
 Package: libbeecrypt7
 Section: libs
-Priority: optional
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Conflicts: beecrypt, beecrypt2, libbeecrypt6
 Description: open source C library of cryptographic algorithms
- BeeCrypt is an open source cryptography library that contains
- highly optimized C and assembler implementations of many well-known
- algorithms including Blowfish, SHA-1, Diffie-Hellman, and ElGamal.
- .
- Unlike some other crypto libraries, BeeCrypt is not designed to
- solve one specific problem, like file encryption, but to be a
- general purpose toolkit which can be used in a variety of
- applications.
- .
- There are also no patent or royalty issues associated with
- BeeCrypt, and it is released under the GNU LGPL license, which
- means it can be used for free in both open source and closed
- source commercial projects. 
+ BeeCrypt is an open source general purpose cryptography library
+ that contains highly optimized C and assembler implementations of
+ many well-known algorithms including Blowfish, SHA-1, Diffie-Hellman,
+ and ElGamal.

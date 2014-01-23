@@ -1,4 +1,3 @@
-usr/lib/libbeecrypt.la
 usr/lib/libbeecrypt.so
 usr/lib/libbeecrypt.a
 usr/include/*
